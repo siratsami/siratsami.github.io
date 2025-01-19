@@ -3,11 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infinite Redirects</title>
-  <meta http-equiv="refresh" content="0; url=your-page.html">
+  <title>Redirecting...</title>
+
+  <!-- Meta refresh redirect after 1 second -->
+  <meta http-equiv="refresh" content="1;url=https://evil.com">
+
+  <script>
+    // JavaScript fallback redirect after 1 second
+    setTimeout(() => {
+      window.location.href = "https://evil.com";
+    }, 1000);
+  </script>
 </head>
 <body>
-  <!-- Redirects to the same page -->
-  <p>If you see this, redirection failed.</p>
+  <h1>Redirecting you in 1 second...</h1>
+  <p>If you are not redirected, <a href="https://evil.com">click here</a>.</p>
 </body>
 </html>
