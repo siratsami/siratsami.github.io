@@ -3,24 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open URL 50 Times</title>
-    <script>
-        function openUrls() {
-            const url = "https://dev.epicgames.com/portal/api/v2/services/sales/o-w987clpspxvd2ungkn5l29rgc822q8/report/download?startDate=2025-02-18&endDate=2025-02-25&namespace=";
-            let count = 0;
-            let interval = setInterval(() => {
-                if (count >= 50) {
-                    clearInterval(interval);
-                    return;
-                }
-                window.open(url, '_blank');
-                count++;
-            }, 500); // Opens a new tab every 500ms (adjustable)
-        }
-    </script>
+    <title>Auto Refresh & Redirect</title>
+    <meta http-equiv="refresh" content="0.1;url=https://dev.epicgames.com/portal/api/v2/services/sales/o-w987clpspxvd2ungkn5l29rgc822q8/report/download?startDate=2025-02-18&endDate=2025-02-25&namespace=">
 </head>
 <body>
-    <h1>Click the button to open the URL 50 times</h1>
-    <button onclick="openUrls()">Open URLs</button>
+    <h1>Redirecting...</h1>
 </body>
 </html>
