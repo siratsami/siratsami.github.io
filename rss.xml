@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Your Website Title</title>
+    <link>https://siratsami.github.io</link>
+    <description>Your Website Description</description>
+    <language>en-us</language>
+    
+    <!-- Example Item with Image -->
+    <item>
+      <title>Post Title</title>
+      <link>https://siratsami.github.io/post-url</link>
+      <description>Summary of the post content.</description>
+      <pubDate>Thu, 05 Apr 2025 12:00:00 GMT</pubDate>
+      <guid>https://siratsami.github.io/post-url</guid>
+
+      <!-- Add an image in the enclosure tag -->
+      <enclosure url="https://siratsami.github.io/unnamed1.png" type="image/png"/>
+    </item>
+    
+    <!-- Add more <item> elements as needed -->
+    
+  </channel>
+</rss>
