@@ -4,16 +4,23 @@
   <title>Image Stress Test</title>
 </head>
 <body>
-  <h1>Loading 50 images...</h1>
+  <h1>Loading 50 images simultaneously...</h1>
   <script>
     const imageUrl = 'https://siratsami.github.io/bloated.png';
+    const totalImages = 50;
 
-    for (let i = 0; i < 50; i++) {
+    // Function to load an image
+    function loadImage() {
       const cacheBuster = Math.random().toString(36).substring(2);
       const img = new Image();
       img.src = `${imageUrl}?cb=${cacheBuster}`;
-      img.style.display = 'none'; // hide to avoid visual clutter
+      img.style.display = 'none'; // hide to avoid clutter
       document.body.appendChild(img);
+    }
+
+    // Load all 50 images asynchronously
+    for (let i = 0; i < totalImages; i++) {
+      loadImage();
     }
   </script>
 </body>
