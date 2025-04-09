@@ -1,6 +1,20 @@
+<!DOCTYPE html>
 <html>
-  <img src="https://siratsami.github.io/bloated.png?1">
-  <img src="https://siratsami.github.io/bloated.png?2">
-  <img src="https://siratsami.github.io/bloated.png?3">
-  <img src="https://siratsami.github.io/bloated.png?4">
+<head>
+  <title>Image Stress Test</title>
+</head>
+<body>
+  <h1>Loading 50 images...</h1>
+  <script>
+    const imageUrl = 'https://siratsami.github.io/bloated.png';
+
+    for (let i = 0; i < 50; i++) {
+      const cacheBuster = Math.random().toString(36).substring(2);
+      const img = new Image();
+      img.src = `${imageUrl}?cb=${cacheBuster}`;
+      img.style.display = 'none'; // hide to avoid visual clutter
+      document.body.appendChild(img);
+    }
+  </script>
+</body>
 </html>
