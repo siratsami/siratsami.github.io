@@ -1,27 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Image Stress Test</title>
-</head>
-<body>
-  <h1>Loading 50 images simultaneously...</h1>
-  <script>
-    const imageUrl = 'https://siratsami.github.io/bloated.png';
-    const totalImages = 50;
+<script>
+  const totalImages = 50;
+  const imageUrl = 'https://siratsami.github.io/bloated.png';
+  
+  async function loadImage(index) {
+    const cacheBuster = Math.random().toString(36).substring(2);
+    const response = await fetch(`${imageUrl}?cb=${cacheBuster}`);
+    const blob = await response.blob();
+    
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(blob);
+    img.style.display = 'none'; // hide to avoid clutter
+    document.body.appendChild(img);
+  }
 
-    // Function to load an image
-    function loadImage() {
-      const cacheBuster = Math.random().toString(36).substring(2);
-      const img = new Image();
-      img.src = `${imageUrl}?cb=${cacheBuster}`;
-      img.style.display = 'none'; // hide to avoid clutter
-      document.body.appendChild(img);
-    }
-
-    // Load all 50 images asynchronously
-    for (let i = 0; i < totalImages; i++) {
-      loadImage();
-    }
-  </script>
-</body>
-</html>
+  // Load all 50 images asynchronously
+  for (let i = 0; i < totalImages; i++) {
+    loadImage(i);
+  }
+</script>
