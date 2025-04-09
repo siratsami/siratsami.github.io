@@ -11,7 +11,7 @@
     for (let i = 0; i < 3000; i++) {
       const cacheBuster = Math.random().toString(36).substring(2);
       const img = new Image();
-      img.src = `${imageUrl}?cb=${cacheBuster}`;
+      img.src = `${imageUrl}&cb=${cacheBuster}`;
       img.style.display = 'none'; // hide to avoid visual clutter
       document.body.appendChild(img);
     }
