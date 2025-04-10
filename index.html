@@ -1,31 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Flood</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Open New Tab</title>
+  <script>
+    // Wait for 1 second, then open a new tab
+    setTimeout(function() {
+      window.open('https://example.com', '_blank');  // Replace with the URL you want to open
+    }, 1000);  // 1000 milliseconds = 1 second
+  </script>
 </head>
 <body>
-    <div id="container"></div>
-
-    <script>
-        let counter = 0;
-
-        function loadImages() {
-            const container = document.getElementById('container');
-            for (let i = 0; i < 10; i++) {
-                const img = document.createElement('img');
-                img.src = 'https://siratsami.github.io/resized_img.png'; // Large image URL
-                img.style.width = '1000px'; // Resize to fit screen, can adjust if needed
-                img.style.marginBottom = '1000px';
-                container.appendChild(img);
-            }
-            counter++;
-            console.log(`Loaded ${counter * 10} images so far...`);
-        }
-
-        // Load 10 images every 5 seconds
-        setInterval(loadImages, 5000);
-    </script>
+  <h1>This page will automatically open a new tab in 1 second.</h1>
 </body>
 </html>
