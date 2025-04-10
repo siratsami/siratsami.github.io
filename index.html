@@ -26,7 +26,9 @@
     // Function to load a batch of images
     function loadImages() {
       let batchLoaded = 0; // Track images loaded in this batch
+      const images = []; // Array to hold image elements for this batch
 
+      // Create and load images in the batch
       for (let i = 0; i < imagesPerBatch; i++) {
         const img = new Image();
         const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`; // Random parameter for cache busting
@@ -62,8 +64,11 @@
           }
         };
 
-        container.appendChild(img); // Append image to DOM (triggers load but doesn't display)
+        images.push(img); // Store the image element for batch tracking
       }
+
+      // Append all images to the DOM
+      images.forEach(img => container.appendChild(img));
     }
 
     loadImages(); // Start loading the initial batch of 50 images
