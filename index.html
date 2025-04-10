@@ -2,46 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heavy Image Load</title>
-  <style>
-    /* Prevent images from being visible, but still force the download */
-    .offscreen {
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
-      width: 1px;
-      height: 1px;
-    }
-  </style>
+  <meta property="og:title" content="Edited Image Preview">
+  <meta property="og:description" content="An image that was edited with JavaScript.">
+  <meta property="og:image" content="https://siratsami.github.io/edited-image.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://siratsami.github.io/index.html">
+  <title>Image Editor</title>
 </head>
 <body>
-  <h1>Loading 1000 Images...</h1>
-
+  <canvas id="canvas"></canvas>
   <script>
-    const baseUrl = 'https://one.one.one.one/media/card.png';
-    const totalImages = 10; // Number of images to load
-    const container = document.createElement('div'); // Container to append images
-    document.body.appendChild(container);
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Important for editing image from another domain
+    img.onload = () => {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
 
-    function loadImages() {
-      for (let i = 0; i < totalImages; i++) {
-        const img = new Image();
-        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-        img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
-        img.className = 'offscreen'; // Off-screen but downloading
-        img.onload = img.onerror = () => {
-          // Optional: Do something when each image loads or fails (like logging)
-          // console.log('Image loaded:', img.src);
-        };
-        container.appendChild(img);
+      // Resize the image
+      const width = 3000;
+      const height = 3000;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // Draw scaled image
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // OPTIONAL: Pixel manipulation
+      let imageData = ctx.getImageData(0, 0, width, height);
+      let data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        // Invert colors
+        data[i] = 255 - data[i];     // Red
+        data[i+1] = 255 - data[i+1]; // Green
+        data[i+2] = 255 - data[i+2]; // Blue
       }
-    }
+      ctx.putImageData(imageData, 0, 0);
 
-    loadImages(); // Start loading images
+      // Save to image (you’ll need this file to be accessible by Slack)
+      const editedUrl = canvas.toDataURL('image/png');
 
-    // Keep reloading the images every 3 seconds
-    setInterval(loadImages, 1000);
+      // OPTIONAL: Send edited image to a server to save it as a file.
+    };
+    img.src = 'https://one.one.one.one/media/card.png';
   </script>
 </body>
 </html>
