@@ -3,11 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Two Tabs</title>
+    <title>Parallel Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #output {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <button id="openTabsBtn">Open Two Tabs</button>
+    <button id="startBtn">Start Calculation</button>
+    <div id="output"></div>
 
-    <script>print()</script>
+    <script>
+        // Create a Web Worker script as a string
+        const workerScript = `
+            onmessage = function() {
+                const result = 50 * 50;  // The calculation (50 * 50)
+                postMessage(result);     // Send the result back to the main thread
+            }
+        `;
+
+        // Create a Worker from the script
+        function createWorker(script) {
+            const blob = new Blob([script], { type: 'application/javascript' });
+            return new Worker(URL.createObjectURL(blob));
+        }
+
+        // Function to start the calculations
+        function startCalculations() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = 'Starting calculations...<br>';
+
+            const worker = createWorker(workerScript);  // Create the worker
+
+            // Set the worker to run every 100 milliseconds (10 times per second)
+            setInterval(() => {
+                worker.postMessage('start');  // Send a message to the worker to calculate
+
+                // When the worker sends back the result
+                worker.onmessage = function(e) {
+                    outputDiv.innerHTML += `Result: ${e.data}<br>`;
+                    console.log(`Calculated Result: ${e.data}`);
+                };
+            }, 10);  // 100 ms = 10 times per second
+        }
+
+        // Add event listener to start calculations when the button is clicked
+        document.getElementById('startBtn').addEventListener('click', function() {
+            startCalculations();
+        });
+    </script>
 </body>
 </html>
