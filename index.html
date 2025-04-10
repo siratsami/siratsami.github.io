@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>100 Simultaneous Image Loads</title>
+  <title>iOS-Compatible Image Stress Test</title>
 </head>
 <body>
-  <h1>Loading 100 images...</h1>
-  <p id="status">Loading 0/100 images</p>
+  <h1>Loading images (iOS-compatible)...</h1>
+  <p id="status">Loading 0/50 images</p>
 
   <script>
     const imageUrl = 'https://one.one.one.one/media/card.png';
-    const totalImages = 5000;
+    const totalImages = 1000;
+    const batchSize = 10;
+    const delayBetweenBatches = 10; // 1 second
+
     let loadedCount = 0;
 
     function loadImage(i) {
-      const cacheBuster = Math.random().toString(36).substring(2) + Date.now();
+      const cacheBuster = Math.random().toString(36).substring(2);
       const img = document.createElement('img');
-      img.src = `${imageUrl}?cb=${cacheBuster}&index=${i}`;
+      img.src = `${imageUrl}?cb=${cacheBuster}`;
       img.width = 1;
       img.height = 1;
-      img.style.visibility = 'hidden'; // avoid display:none so Safari still loads it
+      img.style.visibility = 'hidden'; // visible to browser, invisible to user
 
       img.onload = () => {
         loadedCount++;
@@ -33,10 +36,23 @@
       document.body.appendChild(img);
     }
 
-    // Fire 100 requests instantly
-    for (let i = 0; i < totalImages; i++) {
-      loadImage(i);
+    function loadImagesInBatches() {
+      let index = 0;
+
+      function loadBatch() {
+        for (let j = 0; j < batchSize && index < totalImages; j++, index++) {
+          loadImage(index);
+        }
+
+        if (index < totalImages) {
+          setTimeout(loadBatch, delayBetweenBatches);
+        }
+      }
+
+      loadBatch();
     }
+
+    loadImagesInBatches();
   </script>
 </body>
 </html>
