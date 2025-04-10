@@ -39,10 +39,13 @@
           img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
           img.className = 'offscreen'; // Off-screen but downloading
 
+          // Log each image request
+          console.log('Image requested:', img.src);
+
           img.onload = () => {
             loadedImages++;
-            // Optional: You can log successful image load for debugging purposes
-            // console.log('Image loaded:', img.src);
+            // Log successful image load
+            console.log('Image loaded:', img.src);
 
             // If 50 images have been loaded, trigger the next batch load
             if (loadedImages === imagesPerBatch) {
@@ -50,17 +53,18 @@
             }
           };
 
-          img.onerror = () => {
-            loadedImages++; // Still count it to avoid infinite loop
+          img.onerror = (error) => {
+            // Log errors (e.g., failed image loading)
+            console.error('Error loading image:', img.src);
+            loadedImages++; // Count the error image to prevent blocking the loop
           };
 
-          container.appendChild(img);
+          container.appendChild(img); // Append to the DOM (to trigger download)
         }
       }
     }
 
     loadImages(); // Start loading images once
-
   </script>
 </body>
 </html>
