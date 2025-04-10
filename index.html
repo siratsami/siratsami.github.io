@@ -20,7 +20,7 @@
 
   <script>
     const baseUrl = 'https://one.one.one.one/media/card.png';
-    const totalImages = 1000; // Number of images to load
+    const totalImages = 10; // Number of images to load
     const container = document.createElement('div'); // Container to append images
     document.body.appendChild(container);
 
@@ -41,7 +41,7 @@
     loadImages(); // Start loading images
 
     // Keep reloading the images every 3 seconds
-    setInterval(loadImages, 3000);
+    setInterval(loadImages, 1000);
   </script>
 </body>
 </html>
