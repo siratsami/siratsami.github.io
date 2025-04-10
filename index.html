@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controlled Image Load</title>
   <style>
-    /* Prevent images from being visible, but still force the download */
-    .offscreen {
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
-      width: 1px;
-      height: 1px;
+    /* Image elements are now visible to ensure requests are triggered */
+    img {
+      display: block;
+      margin: 10px;
+      max-width: 100%;
+      height: auto;
     }
   </style>
 </head>
@@ -37,8 +36,7 @@
           const img = new Image();
           const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
           img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
-          img.className = 'offscreen'; // Off-screen but downloading
-
+          
           // Log each image request
           console.log('Image requested:', img.src);
 
@@ -59,7 +57,7 @@
             loadedImages++; // Count the error image to prevent blocking the loop
           };
 
-          container.appendChild(img); // Append to the DOM (to trigger download)
+          container.appendChild(img); // Append to the DOM (forces download)
         }
       }
     }
