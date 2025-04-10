@@ -1,58 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>iOS-Compatible Image Stress Test</title>
+  <meta charset="UTF-8">
+  <title>Image Loader Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    img {
+      width: 10px;
+      height: 10px;
+      margin: 1px;
+      object-fit: cover;
+    }
+  </style>
 </head>
 <body>
-  <h1>Loading images (iOS-compatible)...</h1>
-  <p id="status">Loading images t2</p>
+  <h1>Loading 100 Images</h1>
+  <div class="container" id="imageContainer"></div>
 
   <script>
-    const imageUrl = 'https://one.one.one.one/media/card.png';
-    const totalImages = 5000;
-    const batchSize = 10;
-    const delayBetweenBatches = 10; // 1 second
+    const domains = [
+      'one.one.one.one',  // Same domain to keep it simple; can be replaced with cdn1, cdn2, etc.
+    ];
 
-    let loadedCount = 0;
+    const container = document.getElementById('imageContainer');
+    const totalImages = 100;
+    const baseUrl = 'https://one.one.one.one/media/card.png';
 
-    function loadImage(i) {
-      const cacheBuster = Math.random().toString(36).substring(2);
+    for (let i = 0; i < totalImages; i++) {
       const img = document.createElement('img');
-      img.src = `${imageUrl}?cb=${cacheBuster}`;
-      img.width = 1;
-      img.height = 1;
-      img.style.visibility = 'hidden'; // visible to browser, invisible to user
 
-      img.onload = () => {
-        loadedCount++;
-        document.getElementById('status').textContent = `Loading ${loadedCount}/${totalImages} images`;
-        console.log(`Image ${i + 1} loaded`);
-      };
+      // This prevents caching by adding a unique query param
+      const timestamp = Date.now();
+      const domain = domains[i % domains.length];
+      img.src = `https://${domain}/media/card.png?cb=${timestamp}-${i}`;
 
-      img.onerror = () => {
-        console.warn(`Image ${i + 1} failed to load`);
-      };
-
-      document.body.appendChild(img);
+      // Keep image visible so iOS doesn't throttle
+      container.appendChild(img);
     }
-
-    function loadImagesInBatches() {
-      let index = 0;
-
-      function loadBatch() {
-        for (let j = 0; j < batchSize && index < totalImages; j++, index++) {
-          loadImage(index);
-        }
-
-        if (index < totalImages) {
-          setTimeout(loadBatch, delayBetweenBatches);
-        }
-      }
-
-      loadBatch();
-    }
-
-    loadImagesInBatches();
   </script>
 </body>
 </html>
