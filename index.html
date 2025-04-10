@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Load 50 Images</title>
+  <title>Load 50 Images Without Preview</title>
   <style>
-    /* Images are visible and displayed in a grid */
+    /* Make images invisible initially (they won't be previewed) */
     img {
-      display: block;
-      margin: 10px;
-      max-width: 100%;
-      height: auto;
+      display: none;
     }
   </style>
 </head>
@@ -65,7 +62,7 @@
           }
         };
 
-        container.appendChild(img); // Append image to DOM (triggers load)
+        container.appendChild(img); // Append image to DOM (triggers load but doesn't display)
       }
     }
 
