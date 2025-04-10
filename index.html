@@ -72,6 +72,12 @@
     }
 
     loadImages(); // Start loading the initial batch of 50 images
+
+    // Function to refresh the page every 15 seconds
+    setTimeout(() => {
+      console.log("Refreshing the page...");
+      location.reload(); // Refresh the page
+    }, 15000); // Refresh after 15 seconds (15000 milliseconds)
   </script>
 </body>
 </html>
