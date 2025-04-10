@@ -28,7 +28,7 @@
   <script>
     const baseUrl = 'https://one.one.one.one/media/card.png';
     const imagesPerBatch = 25; // Load 25 new images per batch
-    const maxImages = 100; // Limit the total images to 100
+    const maxImages = 500; // Limit the total images to 100
     let loadedImages = 0; // Track number of successfully loaded images
     let totalImagesLoaded = 0; // Track total images loaded
     const container = document.createElement('div'); // Create a container to hold the images
@@ -70,7 +70,7 @@
           logMessage(`Image ${totalImagesLoaded} loaded: ${img.src}`);
 
           // If 25 images have loaded, check if we need to load more
-          if (loadedImages >= 25) {
+          if (loadedImages >= 10) {
             logMessage(`25 images loaded. Total loaded: ${totalImagesLoaded}`);
             loadImages(); // Start loading the next batch of images
             loadedImages = 0; // Reset the counter for the next batch
@@ -78,13 +78,14 @@
         };
 
         img.onerror = (error) => {
-          // Log image loading error
+          // Log image loading error, but don't stop the script
           logMessage(`Error loading image: ${img.src}`);
+
           batchLoaded++; // Count error images to avoid blocking
 
           // If all images in the batch have attempted to load, move to the next batch
           if (batchLoaded === imagesPerBatch) {
-            if (loadedImages >= 25) {
+            if (loadedImages >= 10) {
               loadImages(); // Load next batch after 25 images are loaded
               loadedImages = 0;
             }
@@ -104,7 +105,7 @@
     setTimeout(() => {
       logMessage(`Refreshing the page after loading ${totalImagesLoaded} images...`);
       location.reload(); // Refresh the page
-    }, 150000); // Refresh after 15 seconds (15000 milliseconds)
+    }, 15000); // Refresh after 15 seconds (15000 milliseconds)
   </script>
 </body>
 </html>
