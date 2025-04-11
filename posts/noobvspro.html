@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beginner vs Pro - Sirat (analyz3r)</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: transparent;
+      color: #f5f5f5;
+      overflow-x: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+    }
+
+    header, main, footer {
+      text-align: center;
+      padding: 20px;
+    }
+
+    header h1 {
+      color: #00ff99;
+    }
+
+    a {
+      color: #00ff99;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    article {
+      max-width: 800px;
+      margin: auto;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      border-radius: 12px;
+    }
+
+    h2, h3 {
+      color: #ffffff;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    ul {
+      text-align: left;
+      margin-left: 20px;
+    }
+
+    * {
+      text-shadow: 0 0 3px black, 0 0 5px black, 1px 1px 2px black;
+    }
+
+    footer {
+      color: #888;
+      font-size: 0.9em;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<header>
+  <h1>Sirat (analyz3r)</h1>
+  <nav>
+    <a href="/index.html">Home</a>
+    <a href="/posts.html">Back to Posts</a>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h2>The Levels of Hacking, Beginner vs PRO!</h2>
+    <img src="https://siratsami.github.io/images/cgpt-levelsofhacking.png" width="650" height="500">
+    <p><strong>Date:</strong> April 12, 2025</p>
+
+    <p>In the world of cybersecurity, the gap between a beginner and a pro isn’t just about tools—it’s about mindset, method, and experience.</p>
+
+    <h3>Beginners:</h3>
+    <ul>
+      <li>Follow checklists.</li>
+      <li>Rely mostly on automated tools.</li>
+      <li>Search for common, known vulnerabilities.</li>
+      <li>Often give up after a few failures.</li>
+    </ul>
+
+    <h3>Pros:</h3>
+    <ul>
+      <li>Think like attackers—outside the box.</li>
+      <li>Use tools as support, not as a crutch.</li>
+      <li>Look for logic flaws, misconfigurations, and creative bypasses.</li>
+      <li>Document everything, automate their workflow, and learn from every bug.</li>
+    </ul>
+
+    <p>Remember: every pro was once a beginner. Keep pushing, stay curious, and never stop learning.</p>
+
+    <h3>So, what should a noob hacker do to reach the pro level?</h3>
+    <ul>
+      <li><strong>Understand the Basics:</strong> Learn networking, HTTP, DNS, how the web works. You can’t hack what you don’t understand.</li>
+      <li><strong>Practice Daily:</strong> Use platforms like Hack The Box, TryHackMe, or PortSwigger labs to sharpen your skills.</li>
+      <li><strong>Manual Testing:</strong> Don’t rely on scanners. Use tools like Burp Suite manually to understand request/response patterns.</li>
+      <li><strong>Read Writeups:</strong> Learn from other hunters' bug bounty reports and CTF solutions.</li>
+      <li><strong>Document Everything:</strong> Keep notes of payloads, bypasses, patterns you discover. Reuse and build on them.</li>
+      <li><strong>Think Creatively:</strong> Ask yourself: “What if the developer forgot something?” or “How could this be abused logically?”</li>
+      <li><strong>Break Stuff Safely:</strong> Set up your own lab. Break, patch, repeat.</li>
+      <li><strong>Stay Updated:</strong> Follow security researchers, blogs, and Twitter/X to learn about new attack vectors.</li>
+    </ul>
+
+    <p>Most importantly, develop patience and persistence. There’s no shortcut to becoming great—just consistent effort and curiosity.</p>
+
+    <p>— analyz3r</p>
+  </article>
+</main>
+
+<script>
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  const letters = "アァイィウエェオカキクケコサシスセソタチツテトナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const fontSize = 14;
+  const columns = Math.floor(width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 5, 0.15)";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "#00ff99";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < columns; i++) {
+      const char = letters.charAt(Math.floor(Math.random() * letters.length));
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 33);
+
+  window.addEventListener("resize", () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+</script>
+
+</body>
+</html>
