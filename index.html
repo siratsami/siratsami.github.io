@@ -14,6 +14,15 @@
       overflow-x: hidden;
     }
 
+    .social-links a {
+    color: #00ff99;
+    margin-right: 15px;
+    text-decoration: none;
+    }
+    .social-links a:hover {
+    text-decoration: underline;
+    }
+
     canvas {
       position: fixed;
       top: 0;
@@ -101,21 +110,11 @@
 
 <main>
   <section>
-    <img src="https://siratsami.github.io/images/me.jpg" width="200" height="200">
-    <h2>Latest Posts</h2>
-
-    <div class="post-preview">
-      <h2>Bypassing 403 Forbidden — Real Case Study</h2>
-      <p>Learn how I bypassed access controls in a real web app using simple tricks and gained unauthorized access...</p>
-      <a class="readmore" href="#">Read More</a>
-    </div>
-
-    <div class="post-preview">
-      <h2>Common Misconfigurations in Pentesting Targets</h2>
-      <p>A checklist of frequently overlooked security gaps you can test in CTFs, bug bounties, or internal assessments...</p>
-      <a class="readmore" href="#">Read More</a>
-    </div>
+  <img src="https://siratsami.github.io/images/me.jpg" width="200" height="200">
+  <h2>Latest Posts</h2>
+  <p><a href="posts.html" style="color: #00ff99; font-size: 1.2em; text-decoration: none;">🔗 View All Posts</a></p>
   </section>
+
 
   <section id="categories">
     <h2>Categories</h2>
@@ -130,6 +129,11 @@
 
   <section id="about">
     <h2>About Me</h2>
+    <div class="social-links">
+    <a href="https://x.com/siratsami71" target="_blank">Twitter</a>
+    <a href="https://www.facebook.com/siratsami71" target="_blank">Facebook</a>
+    <a href="https://hackerone.com/analyz3r" target="_blank">HackerOne</a>
+    </div>
     <p>
       I'm a 24-year-old cybersecurity enthusiast from Erbil, Kurdistan Region of Iraq.
       With over a decade of experience exploring the world of cyber security, I've spent the last 4 years focused on learning vulnerabilities and actively hunting bugs through bug bounty programs.
