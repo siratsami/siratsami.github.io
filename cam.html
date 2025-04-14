@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Camera Access Test</title>
+</head>
+<body>
+  <h2>Camera Access Test Page</h2>
+  <p>Click the button below to test if the browser allows camera access.</p>
+  <button onclick="requestCamera()">Open Camera</button>
+  <br><br>
+  <video id="video" width="320" height="240" autoplay></video>
+
+  <script>
+    function requestCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+          document.getElementById('video').srcObject = stream;
+          console.log("Camera access granted");
+        })
+        .catch(function(err) {
+          console.error("Camera access denied or error:", err);
+        });
+    }
+  </script>
+</body>
+</html>
