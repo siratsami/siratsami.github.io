@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const link = document.getElementById("jsLink");
 
   if (link) {
-    const targetURL = "https://test.com";
+    const targetURL = "https://siratsami.github.io/tests/";
 
     // Set the href dynamically
     link.setAttribute("href", targetURL);
