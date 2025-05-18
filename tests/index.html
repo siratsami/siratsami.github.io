@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JavaScript Required Link</title>
+  <title>JS Required Link</title>
 </head>
 <body>
-  <h1>Protected Link Example</h1>
+  <h2>Click the link below:</h2>
+  <a href="#" id="jsLink">Click me</a>
 
-  <a href="#" id="specialLink">Go to Secret Page</a>
+  <noscript>
+    <p style="color: red;">JavaScript is disabled. This link won't work without it.</p>
+  </noscript>
 
-  <!-- The JavaScript file must be loaded for the link to work -->
-  <script src="script.js"></script>
+  <!-- External JS file required -->
+  <script src="link-handler.js"></script>
 </body>
 </html>
