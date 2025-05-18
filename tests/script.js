@@ -1,8 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const link = document.getElementById("specialLink");
+  const link = document.getElementById("jsLink");
 
-  link.addEventListener("click", (e) => {
-    e.preventDefault(); // prevent default action just in case
-    window.location.href = "https://example.com/secret";
-  });
+  if (link) {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      // Redirect only if JS is active and script is loaded
+      window.location.href = "https://example.com/secret-page";
+    });
+  }
 });
