@@ -9,3 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+test/
+api/
+/api
+/api/:test
